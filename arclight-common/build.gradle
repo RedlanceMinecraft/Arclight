@@ -9,7 +9,7 @@ buildscript {
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: "${forge_gradle_version}", changing: true
         // classpath 'org.parchmentmc:librarian:1.+'
-        classpath 'org.spongepowered:mixingradle:0.7.+'
+        classpath 'org.spongepowered:mixingradle:0.7.2-SNAPSHOT'
         classpath "io.izzel.arclight:arclight-gradle-plugin:$agpVersion"
     }
 }
@@ -49,7 +49,6 @@ repositories {
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://maven.neoforged.net/releases/' }
-    maven { url = 'https://maven.fabricmc.net/' }
     maven { url = 'https://maven.izzel.io/releases' }
     maven { url = 'https://jitpack.io/' }
     mavenCentral()
@@ -61,7 +60,7 @@ dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
 
     implementation "org.spongepowered:mixin:$mixinVersion"
-    annotationProcessor "net.fabricmc:sponge-mixin:0.13.1+mixin.$mixinVersion" // fixed signatureprinter
+    annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
 
     implementation 'com.github.ArclightTeam:mixin-tools:1.0.0'
     annotationProcessor 'com.github.ArclightTeam:mixin-tools:1.0.0'
