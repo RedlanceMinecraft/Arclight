@@ -8,11 +8,13 @@ import java.util.stream.Collectors;
 public class Mirrors {
 
     private static final String[] MAVEN_REPO = {
+        "https://maven.neoforged.net/releases/",
         "https://arclight.hypertention.cn/",
         "https://repo.spongepowered.org/maven/"
     };
 
     private static final String[] MOJANG_MIRROR = {
+        "https://maven.neoforged.net/releases",
         "https://mojmirror.hypertention.cn",
         "https://piston-meta.mojang.com"
     };

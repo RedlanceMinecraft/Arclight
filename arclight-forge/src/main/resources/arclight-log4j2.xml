@@ -31,6 +31,8 @@
                                   pattern="%highlight{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal}"/>
                     <PatternMatch key="net.minecraftforge."
                                   pattern="%highlight{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal}"/>
+                    <PatternMatch key="net.neoforged."
+                                  pattern="%highlight{[%d{HH:mm:ss} %level]: %minecraftFormatting{%msg{nolookup}}%n%xEx}{INFO=normal}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>

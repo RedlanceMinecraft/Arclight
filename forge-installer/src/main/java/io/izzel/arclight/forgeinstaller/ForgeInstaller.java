@@ -76,7 +76,7 @@ public class ForgeInstaller {
         InstallInfo installInfo = new Gson().fromJson(new InputStreamReader(stream), InstallInfo.class);
         List<Supplier<Path>> suppliers = checkMavenNoSource(installInfo.libraries);
         var sysType = File.pathSeparatorChar == ';' ? "win" : "unix";
-        Path path = Paths.get("libraries", "net", "minecraftforge", "forge", installInfo.installer.minecraft + "-" + installInfo.installer.forge, sysType + "_args.txt");
+        Path path = Paths.get("libraries", "net", "neoforged", "forge", installInfo.installer.minecraft + "-" + installInfo.installer.forge, sysType + "_args.txt");
         var installForge = !Files.exists(path) || forgeClasspathMissing(path);
         if (!suppliers.isEmpty() || installForge) {
             System.out.println("Downloading missing libraries ...");
@@ -156,7 +156,7 @@ public class ForgeInstaller {
             }
             return null;
         }, pool);
-        String coord = String.format("net.minecraftforge:forge:%s-%s:installer", info.installer.minecraft, info.installer.forge);
+        String coord = String.format("net.neoforged:forge:%s-%s:installer", info.installer.minecraft, info.installer.forge);
         String dist = String.format("forge-%s-%s-installer.jar", info.installer.minecraft, info.installer.forge);
         MavenDownloader forge = new MavenDownloader(Mirrors.getMavenRepo(), coord, dist, info.installer.hash);
         var installerFuture = reportSupply(pool, logger).apply(forge).thenCombineAsync(minecraftData, (path, data) -> {

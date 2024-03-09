@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
+        maven { url = 'https://maven.neoforged.net/releases' }
         maven { url = 'https://repo.spongepowered.org/maven' }
         mavenCentral()
         maven { url = 'https://maven.izzel.io/releases' }
@@ -48,14 +48,14 @@ repositories {
     maven { url = 'https://repo.spongepowered.org/maven' }
     maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
-    maven { url = 'https://files.minecraftforge.net/maven/' }
+    maven { url = 'https://maven.neoforged.net/releases/' }
     maven { url = 'https://maven.izzel.io/releases' }
     maven { url = 'https://jitpack.io/' }
     mavenCentral()
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:$minecraftVersion-$forgeVersion"
+    minecraft "net.neoforged:forge:$minecraftVersion-$forgeVersion"
     implementation "org.spigotmc:spigot-api:$minecraftVersion-R0.1-SNAPSHOT@jar"
     implementation 'org.jetbrains:annotations:23.0.0'
 
@@ -140,4 +140,22 @@ mixin {
 compileJava {
     options.compilerArgs << '-XDignore.symbol.file' << '-XDenableSunApiLintControl'
     options.encoding = 'UTF-8'
+}
+
+tasks.register("downloadNeoForgeInstaller") {
+    def installerJar = project.file("${project.buildDir}/arclight_cache/forge-${project.ext.minecraftVersion}-${project.ext.forgeVersion}-installer.jar")
+
+    doFirst {
+        if (installerJar.exists()) throw new org.gradle.api.tasks.StopExecutionException()
+        if (installerJar.parentFile != null) {
+            installerJar.parentFile.mkdirs()
+        }
+        def installerUrl = "https://maven.neoforged.net/net/neoforged/forge/${project.ext.minecraftVersion}-${project.ext.forgeVersion}/forge-${project.ext.minecraftVersion}-${project.ext.forgeVersion}-installer.jar"
+        io.izzel.arclight.gradle.Utils.download(installerUrl, installerJar)
+    }
+}
+
+tasks.downloadInstaller.configure {
+    dependsOn downloadNeoForgeInstaller
+    onlyIf { false }
 }
