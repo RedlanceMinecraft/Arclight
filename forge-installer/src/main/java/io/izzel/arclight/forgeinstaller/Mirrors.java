@@ -14,7 +14,6 @@ public class Mirrors {
     };
 
     private static final String[] MOJANG_MIRROR = {
-        "https://maven.neoforged.net/releases",
         "https://mojmirror.hypertention.cn",
         "https://piston-meta.mojang.com"
     };
