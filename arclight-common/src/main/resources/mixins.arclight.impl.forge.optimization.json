@@ -1,6 +1,7 @@
 {
   "minVersion": "0.8",
   "package": "io.izzel.arclight.common.mixin.optimization.general",
+  "plugin": "io.izzel.arclight.common.mixin.optimization.ArclightOptimizationPlugin",
   "target": "@env(DEFAULT)",
   "refmap": "mixins.arclight.refmap.json",
   "compatibilityLevel": "JAVA_17",

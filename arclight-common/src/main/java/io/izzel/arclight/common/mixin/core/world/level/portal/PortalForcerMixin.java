@@ -1,5 +1,8 @@
 package io.izzel.arclight.common.mixin.core.world.level.portal;
 
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import io.izzel.arclight.common.bridge.core.entity.EntityBridge;
 import io.izzel.arclight.common.bridge.core.world.TeleporterBridge;
 import io.izzel.arclight.common.bridge.core.world.WorldBridge;
@@ -7,6 +10,7 @@ import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.border.WorldBorder;
@@ -35,28 +39,33 @@ public abstract class PortalForcerMixin implements TeleporterBridge {
     // @formatter:off
     @Shadow public abstract Optional<BlockUtil.FoundRectangle> createPortal(BlockPos pos, Direction.Axis axis);
     @Shadow @Final protected ServerLevel level;
-    @Shadow public abstract Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_);
     // @formatter:on
 
-    @ModifyVariable(method = "findPortalAround", index = 5, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/village/poi/PoiManager;ensureLoadedAndValid(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;I)V"))
-    private int arclight$useSearchRadius(int i) {
-        return this.arclight$searchRadius == -1 ? i : this.arclight$searchRadius;
-    }
+    @Mixin(value = PortalForcer.class, priority = 1500)
+    public static abstract class RadiumCompatMixin implements TeleporterBridge {
+        @Shadow
+        public abstract Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_);
 
-    private transient int arclight$searchRadius = -1;
-
-    public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos pos, WorldBorder worldBorder, int searchRadius) {
-        this.arclight$searchRadius = searchRadius;
-        try {
-            return this.findPortalAround(pos, false, worldBorder);
-        } finally {
-            this.arclight$searchRadius = -1;
+        @Inject(method = "findPortalAround", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/village/poi/PoiManager;ensureLoadedAndValid(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;I)V"))
+        private void arclight$useSearchRadius(BlockPos p_192986_, boolean p_192987_, WorldBorder p_192988_, CallbackInfoReturnable<Optional<BlockUtil.FoundRectangle>> cir, @Local(ordinal = 0) LocalIntRef i) {
+            if (this.arclight$searchRadius != -1) i.set(this.arclight$searchRadius);
         }
-    }
 
-    @Override
-    public Optional<BlockUtil.FoundRectangle> bridge$findPortal(BlockPos pos, WorldBorder worldborder, int searchRadius) {
-        return findPortalAround(pos, worldborder, searchRadius);
+        private transient int arclight$searchRadius = -1;
+
+        public Optional<BlockUtil.FoundRectangle> findPortalAround(BlockPos pos, WorldBorder worldBorder, int searchRadius) {
+            this.arclight$searchRadius = searchRadius;
+            try {
+                return this.findPortalAround(pos, false, worldBorder);
+            } finally {
+                this.arclight$searchRadius = -1;
+            }
+        }
+
+        @Override
+        public Optional<BlockUtil.FoundRectangle> bridge$findPortal(BlockPos pos, WorldBorder worldborder, int searchRadius) {
+            return findPortalAround(pos, worldborder, searchRadius);
+        }
     }
 
     @ModifyArg(method = "createPortal", index = 1, at = @At(value = "INVOKE", target = "Lnet/minecraft/core/BlockPos;spiralAround(Lnet/minecraft/core/BlockPos;ILnet/minecraft/core/Direction;Lnet/minecraft/core/Direction;)Ljava/lang/Iterable;"))
