@@ -1,6 +1,8 @@
 package io.izzel.arclight.common.mixin.core.commands;
 
 import com.google.common.collect.Maps;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.tree.CommandNode;
@@ -25,7 +27,6 @@ import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -86,8 +87,8 @@ public abstract class CommandsMixin {
         player.connection.send(new ClientboundCommandsPacket(node));
     }
 
-    @Redirect(method = "fillUsableCommands", at = @At(value = "INVOKE", remap = false, target = "Lcom/mojang/brigadier/tree/CommandNode;canUse(Ljava/lang/Object;)Z"))
-    private <S> boolean arclight$canUse(CommandNode<S> commandNode, S source) {
-        return CommandNodeHooks.canUse(commandNode, source);
+    @WrapOperation(method = "fillUsableCommands", at = @At(value = "INVOKE", remap = false, target = "Lcom/mojang/brigadier/tree/CommandNode;canUse(Ljava/lang/Object;)Z"))
+    private <S> boolean arclight$canUse(CommandNode<S> commandNode, S source, Operation<Boolean> original) {
+        return CommandNodeHooks.canUse(commandNode, source, original);
     }
 }

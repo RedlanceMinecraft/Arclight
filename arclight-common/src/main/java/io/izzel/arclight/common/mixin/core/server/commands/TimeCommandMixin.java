@@ -1,5 +1,7 @@
 package io.izzel.arclight.common.mixin.core.server.commands;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import io.izzel.arclight.common.bridge.core.world.server.ServerWorldBridge;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.MinecraftServer;
@@ -26,21 +28,21 @@ public class TimeCommandMixin {
         return List.of(source.getLevel());
     }
 
-    @Redirect(method = "addTime", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setDayTime(J)V"))
-    private static void arclight$addTimeEvent(ServerLevel serverWorld, long time) {
+    @WrapOperation(method = "addTime", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setDayTime(J)V"))
+    private static void arclight$addTimeEvent(ServerLevel serverWorld, long time, Operation<Void> original) {
         TimeSkipEvent event = new TimeSkipEvent(((ServerWorldBridge) serverWorld).bridge$getWorld(), TimeSkipEvent.SkipReason.COMMAND, time - serverWorld.getDayTime());
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            serverWorld.setDayTime(serverWorld.getDayTime() + event.getSkipAmount());
+            original.call(serverWorld, serverWorld.getDayTime() + event.getSkipAmount());
         }
     }
 
-    @Redirect(method = "setTime", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setDayTime(J)V"))
-    private static void arclight$setTimeEvent(ServerLevel serverWorld, long time) {
+    @WrapOperation(method = "setTime", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;setDayTime(J)V"))
+    private static void arclight$setTimeEvent(ServerLevel serverWorld, long time, Operation<Void> original) {
         TimeSkipEvent event = new TimeSkipEvent(((ServerWorldBridge) serverWorld).bridge$getWorld(), TimeSkipEvent.SkipReason.COMMAND, time - serverWorld.getDayTime());
         Bukkit.getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            serverWorld.setDayTime(serverWorld.getDayTime() + event.getSkipAmount());
+            original.call(serverWorld, serverWorld.getDayTime() + event.getSkipAmount());
         }
     }
 }

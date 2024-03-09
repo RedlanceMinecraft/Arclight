@@ -1,5 +1,6 @@
 package io.izzel.arclight.common.mod.compat;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.brigadier.tree.CommandNode;
 import io.izzel.arclight.api.Unsafe;
 import io.izzel.arclight.common.bridge.core.command.CommandSourceBridge;
@@ -34,16 +35,21 @@ public class CommandNodeHooks {
         return (CommandNode<?>) Unsafe.getObjectVolatile(CURRENT_BASE, CURRENT);
     }
 
+    @SuppressWarnings("unchecked")
     public static <S> boolean canUse(CommandNode<S> node, S source) {
+        return canUse(node, source, args -> ((CommandNode<S>) args[0]).canUse((S) args[1]));
+    }
+
+    public static <S> boolean canUse(CommandNode<S> node, S source, Operation<Boolean> original) {
         if (source instanceof CommandSourceBridge s) {
             try {
                 s.bridge$setCurrentCommand(node);
-                return node.canUse(source);
+                return original.call(node, source);
             } finally {
                 s.bridge$setCurrentCommand(null);
             }
         } else {
-            return node.canUse(source);
+            return original.call(node, source);
         }
     }
 }

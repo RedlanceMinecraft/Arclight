@@ -9,7 +9,7 @@ buildscript {
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: "${forge_gradle_version}", changing: true
         // classpath 'org.parchmentmc:librarian:1.+'
-        classpath 'org.spongepowered:mixingradle:0.7.2-SNAPSHOT'
+        classpath 'org.spongepowered:mixingradle:0.7.+'
         classpath "io.izzel.arclight:arclight-gradle-plugin:$agpVersion"
     }
 }
@@ -60,10 +60,12 @@ dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
 
     implementation "org.spongepowered:mixin:$mixinVersion"
-    annotationProcessor 'org.spongepowered:mixin:0.8.3:processor'
+    annotationProcessor "org.spongepowered:mixin:$mixinVersion:processor"
 
     implementation 'com.github.ArclightTeam:mixin-tools:1.0.0'
     annotationProcessor 'com.github.ArclightTeam:mixin-tools:1.0.0'
+    implementation "io.github.llamalad7:mixinextras-common:0.3.5"
+    annotationProcessor "io.github.llamalad7:mixinextras-common:0.3.5"
 
     implementation 'jline:jline:2.12.1'
     implementation 'net.md-5:SpecialSource:1.11.0'
